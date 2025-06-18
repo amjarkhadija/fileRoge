@@ -1,7 +1,7 @@
 <?php
 // login.php
 session_start(); // Start the session to store user info
-require_once 'db_connect.php'; // Include the database connection
+require_once 'config.php'; // Include the database connection
 
 $message = '';
 
