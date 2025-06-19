@@ -172,48 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Annonce - 3a9ari.ma</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
-        .container { max-width: 600px; margin: 30px auto; padding: 25px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #333; margin-bottom: 20px; }
-        form div { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
-        input[type="text"],
-        input[type="number"],
-        textarea,
-        select {
-            width: calc(100% - 22px);
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        input[type="file"] {
-            width: 100%;
-            padding: 8px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            background-color: #f9f9f9;
-        }
-        textarea { resize: vertical; }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 17px;
-            margin-top: 20px;
-        }
-        button:hover { background-color: #0056b3; }
-        p a { color: #007bff; text-decoration: none; }
-        p a:hover { text-decoration: underline; }
-        .error-message { color: red; font-size: 14px; }
-        .success-message { color: green; font-size: 14px; }
-    </style>
+   <link rel="stylesheet" href="add_annonce.css">
 </head>
 <body>
     <div class="container">

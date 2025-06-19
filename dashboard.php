@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-// Récupérer les annonces de l'utilisateur
 try {
     $stmt = $pdo->prepare("SELECT * FROM annonce WHERE id_user = ?");
     $stmt->execute([$userId]);
@@ -26,37 +25,30 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon Espace - 3a9ari.ma</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dashboard.css">
+   
 </head>
 <body>
     <div class="container">
         <!-- Header Section -->
         <div class="dashboard-header">
-            <h2 class="welcome-title">Bienvenue, <?= htmlspecialchars($_SESSION['user_nom']); ?> !</h2>
+            <h2 class="welcome-title">Bienvenue, <?= htmlspecialchars($_SESSION['user_name']); ?> !</h2>
             
             <nav class="nav-menu">
-                <a href="add_annonce.php" class="nav-link">
-                    <span>➕</span> Ajouter une annonce
-                </a>
-                <a href="modifier_profil.php" class="nav-link">
-                    <span>⚙️</span> Modifier mon profil
-                </a>
-                <a href="logout.php" class="nav-link">
-                    <span>🚪</span> Déconnexion
-                </a>
+                <a href="add_annonce.php" class="nav-link"><span>➕</span> Ajouter une annonce</a>
+                <a href="modifier_profil.php" class="nav-link"><span>⚙️</span> Modifier mon profil</a>
+                <a href="logout.php" class="nav-link"><span>🚪</span> Déconnexion</a>
             </nav>
         </div>
 
         <!-- Content Section -->
         <div class="dashboard-content">
             <h3 class="section-title">Mes Annonces</h3>
-            
+
             <?php if (empty($annonces)) : ?>
                 <div class="empty-state">
                     <p>Vous n'avez pas encore publié d'annonce.</p>
-                    <a href="add_annonce.php" class="nav-link">
-                        <span>➕</span> Créer ma première annonce
-                    </a>
+                    <a href="add_annonce.php" class="nav-link"><span>➕</span> Créer ma première annonce</a>
                 </div>
             <?php else : ?>
                 <div class="table-container">
@@ -66,6 +58,7 @@ try {
                                 <th>Titre</th>
                                 <th>Prix</th>
                                 <th>Ville</th>
+                                <th>Statut</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -75,6 +68,16 @@ try {
                                     <td><?= htmlspecialchars($a['titre']) ?></td>
                                     <td class="prix"><?= htmlspecialchars($a['prix']) ?></td>
                                     <td><?= htmlspecialchars($a['ville']) ?></td>
+                                    <td>
+                                        <form action="update_statut.php" method="POST" class="statut-form">
+                                            <input type="hidden" name="id_annonce" value="<?= $a['id_annonce'] ?>">
+                                            <select name="statut" onchange="this.form.submit()">
+                                                <option value="Disponible" <?= $a['statut'] === 'Disponible' ? 'selected' : '' ?>>Disponible</option>
+                                                <option value="Vendu" <?= $a['statut'] === 'Vendu' ? 'selected' : '' ?>>Vendu</option>
+                                                <option value="Loué" <?= $a['statut'] === 'Loué' ? 'selected' : '' ?>>Loué</option>
+                                            </select>
+                                        </form>
+                                    </td>
                                     <td>
                                         <div class="action-buttons">
                                             <a href="modifier_annonce.php?id=<?= $a['id_annonce'] ?>" class="action-btn btn-edit">

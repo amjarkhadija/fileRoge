@@ -39,6 +39,34 @@ try {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+.navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+
+        .navbar .logo img {
+            height: 40px; /* Adjust as needed */
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar ul li a:hover {
+            color: #e0e0e0;
+        }
     <meta charset="UTF-8">
     <title>3a9ari.ma - Properties</title>
     <style>
@@ -49,7 +77,7 @@ try {
             box-sizing: border-box;
         }
 
-        body { 
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
             line-height: 1.6;
@@ -61,6 +89,35 @@ try {
             color: white;
             text-align: center;
             margin-bottom: 40px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+
+        .navbar .logo img {
+            height: 40px; /* Adjust as needed */
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar ul li a:hover {
+            color: #e0e0e0;
         }
 
         .header-section h1 {
@@ -99,16 +156,16 @@ try {
             color: #999;
         }
 
-        .container { 
-            max-width: 1200px; 
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
 
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
-            gap: 30px; 
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
             margin-bottom: 40px;
         }
 
@@ -121,7 +178,7 @@ try {
             border: 1px solid #e5e7eb;
         }
 
-        .card:hover { 
+        .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 25px rgba(0,0,0,0.1);
         }
