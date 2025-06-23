@@ -36,7 +36,6 @@ try {
             
             <nav class="nav-menu">
                 <a href="add_annonce.php" class="nav-link"><span>➕</span> Ajouter une annonce</a>
-                <a href="modifier_profil.php" class="nav-link"><span>⚙️</span> Modifier mon profil</a>
                 <a href="logout.php" class="nav-link"><span>🚪</span> Déconnexion</a>
             </nav>
         </div>

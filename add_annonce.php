@@ -1,26 +1,23 @@
 <?php
-// add_annonce.php
 session_start();
-require_once 'config.php'; // Your PDO connection file
-
-
+require_once 'config.php';
 
 $message = '';
 $categories = [];
-$erreurs = []; // Array to store validation errors
+$erreurs = [];
 
-// Fetch categories for the dropdown
+// Fetch categories
 try {
     $stmt_cat = $pdo->query("SELECT id_categorie, nom_categorie FROM categorie ORDER BY nom_categorie");
     $categories = $stmt_cat->fetchAll(PDO::FETCH_ASSOC);
     if (empty($categories)) {
-        $message = '<p style="color: orange;">No categories found. Please add categories first (e.g., Appartement, Maison, Terrain).</p>';
+        $message = '<p style="color: orange;">No categories found. Please add categories first.</p>';
     }
 } catch (PDOException $e) {
-    $message = '<p style="color: red;">Error fetching categories: ' . htmlspecialchars($e->getMessage()) . '</p>';
+    $message = '<p style="color: red;">Error: ' . htmlspecialchars($e->getMessage()) . '</p>';
 }
 
-// Initialize variables for sticky form
+// Sticky form variables
 $titre = '';
 $description = '';
 $id_categorie = '';
@@ -31,7 +28,6 @@ $prix = '';
 $nb_pieces = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitize and get form data
     $titre = trim($_POST['titre'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $id_categorie = $_POST['id_categorie'] ?? '';
@@ -43,190 +39,169 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $statut = 'Disponible';
     $id_user = $_SESSION['user_id'];
 
-    // Basic Validation
-    if (empty($titre)) {
-        $erreurs[] = "Title is required.";
-    }
-    if (empty($description)) {
-        $erreurs[] = "Description is required.";
-    }
-    if (empty($id_categorie)) {
-        $erreurs[] = "Category is required.";
-    }
-    if (empty($ville)) {
-        $erreurs[] = "City is required.";
-    }
-    if (empty($surface) || !is_numeric($surface) || $surface <= 0) {
-        $erreurs[] = "Surface must be a positive number.";
-    }
-    if (empty($prix) || !is_numeric($prix) || $prix <= 0) {
-        $erreurs[] = "Price must be a positive number.";
-    }
-    if (empty($nb_pieces) || !is_numeric($nb_pieces) || $nb_pieces <= 0) {
-        $erreurs[] = "Number of rooms must be a positive integer.";
-    }
+    // Validation
+    if (empty($titre)) $erreurs['titre'] = "Title is required.";
+    if (empty($description)) $erreurs['description'] = "Description is required.";
+    if (empty($id_categorie)) $erreurs['id_categorie'] = "Category is required.";
+    if (empty($ville)) $erreurs['ville'] = "City is required.";
+    if (empty($surface) || !is_numeric($surface) || $surface <= 0) $erreurs['surface'] = "Surface must be a positive number.";
+    if (empty($prix) || !is_numeric($prix) || $prix <= 0) $erreurs['prix'] = "Price must be a positive number.";
+    if (empty($nb_pieces) || !is_numeric($nb_pieces) || $nb_pieces <= 0) $erreurs['nb_pieces'] = "Number of rooms must be a positive integer.";
 
-    // Image Upload Validation
+    // Image check
     if (empty($_FILES['photos']['name'][0])) {
-        $erreurs[] = "At least one image is required.";
+        $erreurs['photos'] = "At least one image is required.";
+    } elseif (count($_FILES['photos']['name']) > 4) {
+        $erreurs['photos'] = "Maximum 4 images allowed.";
     } else {
-        // Enforce maximum 4 images
-        if (count($_FILES['photos']['name']) > 4) {
-            $erreurs[] = "You can upload a maximum of 4 images.";
-        } else {
-            foreach ($_FILES['photos']['name'] as $key => $image_name) {
-                $file_tmp = $_FILES['photos']['tmp_name'][$key];
-                $file_size = $_FILES['photos']['size'][$key];
-                $file_error = $_FILES['photos']['error'][$key];
-                $file_ext = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
+        foreach ($_FILES['photos']['name'] as $key => $image_name) {
+            $file_tmp = $_FILES['photos']['tmp_name'][$key];
+            $file_size = $_FILES['photos']['size'][$key];
+            $file_error = $_FILES['photos']['error'][$key];
+            $file_ext = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
+            $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
 
-                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
-
-                // Verify file is an actual image
-                if ($file_tmp && !@exif_imagetype($file_tmp)) {
-                    $erreurs[] = "File " . htmlspecialchars($image_name) . " is not a valid image.";
-                } elseif ($file_error !== 0) {
-                    $erreurs[] = "Error uploading image: " . htmlspecialchars($image_name) . " (Code: " . $file_error . ")";
-                } elseif (!in_array($file_ext, $allowed_extensions)) {
-                    $erreurs[] = "Invalid file type for " . htmlspecialchars($image_name) . ". Only JPG, JPEG, PNG, GIF are allowed.";
-                } elseif ($file_size > 5 * 1024 * 1024) { // 5MB limit
-                    $erreurs[] = "File size for " . htmlspecialchars($image_name) . " exceeds 5MB limit.";
-                }
+            if ($file_tmp && !@exif_imagetype($file_tmp)) {
+                $erreurs['photos'] = "File $image_name is not a valid image.";
+            } elseif ($file_error !== 0) {
+                $erreurs['photos'] = "Error uploading $image_name.";
+            } elseif (!in_array($file_ext, $allowed_extensions)) {
+                $erreurs['photos'] = "Only JPG, JPEG, PNG, GIF allowed.";
+            } elseif ($file_size > 5 * 1024 * 1024) {
+                $erreurs['photos'] = "$image_name exceeds 5MB.";
             }
         }
     }
 
-    // If no validation errors, proceed with insertion
+    // Insertion
     if (empty($erreurs)) {
         try {
-            // Start transaction to ensure data consistency
             $pdo->beginTransaction();
-
-            // Insert into annonce table
             $stmt = $pdo->prepare("INSERT INTO annonce (titre, description, id_categorie, ville, quartier, surface, prix, nb_pieces, statut, id_user) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([$titre, $description, $id_categorie, $ville, $quartier, $surface, $prix, $nb_pieces, $statut, $id_user]);
 
             $annonce_id = $pdo->lastInsertId();
-
-            // Handle image uploads
             $upload_dir = 'uploads/';
-            if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0755, true); // Use 0755 for better security
-            }
+            if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
 
-            $uploaded_images_paths = [];
             foreach ($_FILES['photos']['tmp_name'] as $key => $tmp_name) {
-                $file_ext = strtolower(pathinfo($_FILES['photos']['name'][$key], PATHINFO_EXTENSION));
-                $new_file_name = uniqid('img_', true) . '.' . $file_ext;
-                $target_file = $upload_dir . $new_file_name;
+                $ext = strtolower(pathinfo($_FILES['photos']['name'][$key], PATHINFO_EXTENSION));
+                $file_name = uniqid('img_', true) . '.' . $ext;
+                $target = $upload_dir . $file_name;
 
-                if (move_uploaded_file($tmp_name, $target_file)) {
-                    $uploaded_images_paths[] = $target_file;
+                if (move_uploaded_file($tmp_name, $target)) {
                     $stmt_img = $pdo->prepare("INSERT INTO image (chemin_image, id_annonce) VALUES (?, ?)");
-                    $stmt_img->execute([$target_file, $annonce_id]);
-                } else {
-                    $erreurs[] = "Failed to upload image: " . htmlspecialchars($_FILES['photos']['name'][$key]);
+                    $stmt_img->execute([$target, $annonce_id]);
                 }
             }
 
-            if (!empty($erreurs)) {
-                // Rollback if image uploads failed
-                $pdo->rollBack();
-                // Optionally delete uploaded files
-                foreach ($uploaded_images_paths as $path) {
-                    if (file_exists($path)) {
-                        unlink($path);
-                    }
-                }
-                $message = '<ul style="color: red;"><li>Annonce creation failed due to image upload errors:</li>';
-                foreach ($erreurs as $error) {
-                    $message .= '<li>' . htmlspecialchars($error) . '</li>';
-                }
-                $message .= '</ul>';
-            } else {
-                // Commit transaction
-                $pdo->commit();
-                $message = '<p class="success-message">Annonce and images added successfully! <a href="index.php">View all annonces</a>.</p>';
-                // Clear form fields
-                $titre = $description = $id_categorie = $ville = $quartier = $surface = $prix = $nb_pieces = '';
-            }
+            $pdo->commit();
+            $message = '<p class="success-message">Annonce created! <a href="index.php">View annonces</a></p>';
+            $titre = $description = $id_categorie = $ville = $quartier = $surface = $prix = $nb_pieces = '';
         } catch (PDOException $e) {
             $pdo->rollBack();
-            $message = '<p class="error-message">Error adding annonce: ' . htmlspecialchars($e->getMessage()) . '</p>';
-            // Log error for debugging (in production, use a proper logging system)
-            error_log("PDO Error in add_annonce.php: " . $e->getMessage());
+            $message = '<p class="error-message">Error: ' . htmlspecialchars($e->getMessage()) . '</p>';
         }
-    } else {
-        $message = '<ul class="error-message">';
-        foreach ($erreurs as $error) {
-            $message .= '<li>' . htmlspecialchars($error) . '</li>';
-        }
-        $message .= '</ul>';
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Annonce - 3a9ari.ma</title>
-   <link rel="stylesheet" href="add_annonce.css">
+    <link rel="stylesheet" href="add_annonce.css">
+    <style>
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .success-message {
+            color: green;
+        }
+        .error-message {
+            color: red;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            padding: 1em;
+        }
+        form div {
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Publish a New Annonce</h1>
-        <p><a href="index.php">Back to Homepage</a></p>
-        <?php echo $message; ?>
+<div class="container">
+    <h1>Publish a New Annonce</h1>
+    <p><a href="index.php">Back to Homepage</a></p>
+    <?= $message ?>
 
-        <form action="add_annonce.php" method="POST" enctype="multipart/form-data">
-            <div>
-                <label for="titre">Title:</label>
-                <input type="text" id="titre" name="titre" required value="<?= htmlspecialchars($titre) ?>">
-            </div>
-            <div>
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" rows="5" required><?= htmlspecialchars($description) ?></textarea>
-            </div>
-            <div>
-                <label for="id_categorie">Category:</label>
-                <select id="id_categorie" name="id_categorie" required>
-                    <option value="">Select Category</option>
-                    <?php foreach ($categories as $cat): ?>
-                        <option value="<?= htmlspecialchars($cat['id_categorie']) ?>" <?= $id_categorie == $cat['id_categorie'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($cat['nom_categorie']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div>
-                <label for="ville">City:</label>
-                <input type="text" id="ville" name="ville" required value="<?= htmlspecialchars($ville) ?>">
-            </div>
-            <div>
-                <label for="quartier">Neighborhood (Optional):</label>
-                <input type="text" id="quartier" name="quartier" value="<?= htmlspecialchars($quartier) ?>">
-            </div>
-            <div>
-                <label for="surface">Surface (m²):</label>
-                <input type="number" id="surface" name="surface" step="0.01" min="0" required value="<?= htmlspecialchars($surface) ?>">
-            </div>
-            <div>
-                <label for="prix">Price (DH):</label>
-                <input type="number" id="prix" name="prix" min="0" required value="<?= htmlspecialchars($prix) ?>">
-            </div>
-            <div>
-                <label for="nb_pieces">Number of Rooms:</label>
-                <input type="number" id="nb_pieces" name="nb_pieces" min="1" required value="<?= htmlspecialchars($nb_pieces) ?>">
-            </div>
-            <div>
-                <label for="photos">Upload Photos (Max 4, 5MB each):</label>
-                <input type="file" id="photos" name="photos[]" multiple accept="image/jpeg,image/png,image/gif">
-                <small>Hold Ctrl/Cmd to select up to 4 images (JPG, PNG, GIF).</small>
-            </div>
-            <button type="submit">Publish Annonce</button>
-        </form>
-    </div>
+    <form action="" method="POST" enctype="multipart/form-data">
+        <div>
+            <label>Title:</label>
+            <input type="text" name="titre" value="<?= htmlspecialchars($titre) ?>">
+            <?php if (!empty($erreurs['titre'])): ?><div class="error"><?= $erreurs['titre'] ?></div><?php endif; ?>
+        </div>
+
+        <div>
+            <label>Description:</label>
+            <textarea name="description"><?= htmlspecialchars($description) ?></textarea>
+            <?php if (!empty($erreurs['description'])): ?><div class="error"><?= $erreurs['description'] ?></div><?php endif; ?>
+        </div>
+
+        <div>
+            <label>Category:</label>
+            <select name="id_categorie">
+                <option value="">Select category</option>
+                <?php foreach ($categories as $cat): ?>
+                    <option value="<?= $cat['id_categorie'] ?>" <?= $id_categorie == $cat['id_categorie'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($cat['nom_categorie']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <?php if (!empty($erreurs['id_categorie'])): ?><div class="error"><?= $erreurs['id_categorie'] ?></div><?php endif; ?>
+        </div>
+
+        <div>
+            <label>City:</label>
+            <input type="text" name="ville" value="<?= htmlspecialchars($ville) ?>">
+            <?php if (!empty($erreurs['ville'])): ?><div class="error"><?= $erreurs['ville'] ?></div><?php endif; ?>
+        </div>
+
+        <div>
+            <label>Neighborhood (optional):</label>
+            <input type="text" name="quartier" value="<?= htmlspecialchars($quartier) ?>">
+        </div>
+
+        <div>
+            <label>Surface (m²):</label>
+            <input type="number" name="surface" value="<?= htmlspecialchars($surface) ?>">
+            <?php if (!empty($erreurs['surface'])): ?><div class="error"><?= $erreurs['surface'] ?></div><?php endif; ?>
+        </div>
+
+        <div>
+            <label>Price (DH):</label>
+            <input type="number" name="prix" value="<?= htmlspecialchars($prix) ?>">
+            <?php if (!empty($erreurs['prix'])): ?><div class="error"><?= $erreurs['prix'] ?></div><?php endif; ?>
+        </div>
+
+        <div>
+            <label>Rooms:</label>
+            <input type="number" name="nb_pieces" value="<?= htmlspecialchars($nb_pieces) ?>">
+            <?php if (!empty($erreurs['nb_pieces'])): ?><div class="error"><?= $erreurs['nb_pieces'] ?></div><?php endif; ?>
+        </div>
+
+        <div>
+            <label>Photos (max 4):</label>
+            <input type="file" name="photos[]" multiple>
+            <?php if (!empty($erreurs['photos'])): ?><div class="error"><?= $erreurs['photos'] ?></div><?php endif; ?>
+        </div>
+
+        <button type="submit">Publish</button>
+    </form>
+</div>
 </body>
 </html>

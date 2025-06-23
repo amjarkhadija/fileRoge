@@ -47,8 +47,8 @@ try {
             <div class="logo"><img src="img/logo.png" alt="Logo"></div>
             <ul>
                 <li><a href="#">Home</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="index.php">About</a></li>
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <li><a href="dashboard.php">Dashboard</a></li>
                     <li><a href="logout.php">Logout</a></li>
@@ -134,7 +134,7 @@ try {
         </div>
 
         <div class="more">
-            <a href="#" class="btn-primary">Browse properties →</a>
+        <a href="index.php" class="btn-primary">Browse properties →</a>
         </div>
     </section>
 
@@ -145,13 +145,14 @@ try {
             <div class="footer-section logo-section">
                 <div class="logo">
                     <div class="logo-icon">
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M16 2L6 8v16l10 6 10-6V8l-10-6z" stroke="white" stroke-width="2" fill="none"/>
                             <path d="M16 8v16" stroke="white" stroke-width="2"/>
                             <path d="M6 8l10 6 10-6" stroke="white" stroke-width="2"/>
-                        </svg>
+                        </svg> -->
+                        <img class="logo-icon"><img src="img/logo.png" alt=""/>
                     </div>
-                    <span class="logo-text">SAOARI</span>
+                    
                 </div>
             </div>
             <!-- Navigation Links Section -->

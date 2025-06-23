@@ -89,12 +89,13 @@ try {
         </div>
 
         <div class="right-column">
-            <div class="contact-card">
-                <h3 class="contact-title">Contactez-nous</h3>
-                <p>Intéressé par cette propriété ? Contactez notre équipe pour plus d'informations.</p>
-                <button class="contact-button">Appeler maintenant</button>
-                <button class="contact-button">Envoyer un message</button>
-            </div>
+    <div class="contact-card">
+        <h3 class="contact-title">Contactez-nous</h3>
+        <p>Intéressé par cette propriété ? Contactez notre équipe pour plus d'informations.</p>
+        <a href="contact.html" class="contact-button">Appeler maintenant</a>
+    </div>
+</div>
+
 
             <div class="property-features">
                 <h3 class="features-title">Caractéristiques</h3>

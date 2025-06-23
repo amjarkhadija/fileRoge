@@ -39,36 +39,7 @@ try {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-.navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            margin-bottom: 20px;
-        }
-
-        .navbar .logo img {
-            height: 40px; /* Adjust as needed */
-        }
-
-        .navbar ul {
-            list-style: none;
-            display: flex;
-            gap: 20px;
-        }
-
-        .navbar ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .navbar ul li a:hover {
-            color: #e0e0e0;
-        }
-    <meta charset="UTF-8">
-    <title>3a9ari.ma - Properties</title>
+    
     <style>
        <style>
         * {
@@ -110,7 +81,7 @@ try {
         }
 
         .navbar ul li a {
-            color: white;
+            color: black;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
@@ -170,35 +141,97 @@ try {
         }
 
         .card {
-            background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            border: 1px solid #e5e7eb;
-        }
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    overflow: hidden;
+    max-width: 350px;
+    margin: 20px auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px rgba(0,0,0,0.1);
-        }
+.card-image-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
 
-        .card-image-container {
-            position: relative;
-            height: 240px;
-            overflow: hidden;
-        }
+.card-body {
+    padding: 20px;
+}
 
-        .card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
+.price {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    color: #2d3748;
+}
 
-        .card:hover img {
-            transform: scale(1.05);
-        }
+.per-month {
+    font-size: 1rem;
+    color: #718096;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+.property-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+    color: #1a202c;
+}
+
+.location {
+    font-size: 1rem;
+    color: #4a5568;
+    margin-bottom: 15px;
+}
+
+.property-icons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.icon-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: #4a5568;
+}
+
+.icon-text img {
+    width: 20px;
+    height: 20px;
+}
+
+.category-tag {
+    display: inline-block;
+    background: #6b46c1;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.view-button {
+    display: inline-block;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 2px solid #6b46c1;
+    color: #6b46c1;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.view-button:hover {
+    background-color: #6b46c1;
+    color: white;
+}
+
 
         .card-body {
             padding: 25px;
@@ -327,9 +360,25 @@ try {
         }
     </style>
 
-    </style>
+    
 </head>
+
 <body>
+<div class="navbar">
+            <div class="logo"><img src="img/logo.png" alt="Logo"></div>
+            <ul>
+                <li><a href="landing.php">Home</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="#">About</a></li>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <li><a href="dashboard.php">Dashboard</a></li>
+                    <li><a href="logout.php">Logout</a></li>
+                <?php else: ?>
+                    <li><a href="login.php">Log In</a></li>
+                    <li><a href="register.php">Sign In</a></li>
+                <?php endif; ?>
+            </ul>
+        </div>
     <div class="header-section">
         <h1>Discover your next property</h1>
         <p>Search based on city and property type</p>
@@ -345,23 +394,35 @@ try {
             <?php if (!empty($properties)): ?>
                 <?php foreach ($properties as $property): ?>
                     <div class="card">
-                        <div class="card-image-container">
-                            <img src="<?= htmlspecialchars($property['chemin_image'] ?? 'default.jpg') ?>" alt="<?= htmlspecialchars($property['titre']) ?>">
-                        </div>
-                        <div class="card-body">
-                            <div class="price"><?= number_format($property['prix'], 0, ',', ' ') ?> DH</div>
-                            <h3><?= htmlspecialchars($property['titre']) ?></h3>
-                            <div class="property-details">
-                                <div class="detail-item"><?= htmlspecialchars($property['nb_pieces']) ?> Rooms</div>
-                                <div class="detail-item"><?= htmlspecialchars($property['surface']) ?> m²</div>
-                            </div>
-                            <div class="location">
-                                <?= htmlspecialchars($property['ville']) ?><?= $property['quartier'] ? ', ' . htmlspecialchars($property['quartier']) : '' ?>
-                            </div>
-                            <div class="category-tag"><?= htmlspecialchars($property['nom_categorie']) ?></div>
-                            <a href="detail.php?id=<?= $property['id_annonce'] ?>" class="view-button">See details →</a>
-                        </div>
-                    </div>
+    <div class="card-image-container">
+        <img src="<?= htmlspecialchars($property['chemin_image'] ?? 'default.jpg') ?>" alt="<?= htmlspecialchars($property['titre']) ?>">
+    </div>
+    <div class="card-body">
+        <h3 class="price"><strong><?= number_format($property['prix'], 0, '', ' ') ?> DH</strong> <span class="per-month">/month</span></h3>
+        <p class="property-title"><?= htmlspecialchars($property['titre']) ?></p>
+        <p class="location"><?= htmlspecialchars($property['ville']) ?><?= $property['quartier'] ? ', ' . htmlspecialchars($property['quartier']) : '' ?></p>
+
+        <div class="property-icons">
+            <div class="icon-text">
+                <span><img src="img/bed-svg.svg" alt="Rooms"></span>
+                <span><?= htmlspecialchars($property['nb_pieces']) ?> rooms</span>
+            </div>
+            <div class="icon-text">
+                <span><img src="img/person.svg" alt="Persons"></span>
+                <span>1–2 Persons</span>
+            </div>
+            <div class="icon-text">
+                <span><img src="img/bathtub icon.png" alt="Bath"></span>
+                <span>Bath</span>
+            </div>
+        </div>
+
+        <div class="category-tag"><?= htmlspecialchars($property['nom_categorie']) ?></div>
+
+        <a href="detail.php?id=<?= $property['id_annonce'] ?>" class="view-button btn-outline">View Details</a>
+    </div>
+</div>
+
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="no-results">

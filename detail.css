@@ -276,14 +276,19 @@
             font-weight: 600;
             transition: all 0.3s ease;
             width: 100%;
-            margin-top: 15px;
+            margin-top: 15px; 
+            margin-bottom: 10px; 
+            text-align: center;
+            display: inline-block;
+            text-decoration: none; 
         }
-
+        
         .contact-button:hover {
             background: rgba(255,255,255,0.3);
             border-color: rgba(255,255,255,0.5);
             transform: translateY(-2px);
         }
+        
 
         .property-features {
             background: white;

@@ -46,89 +46,213 @@ $error = $_GET['error'] ?? '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Listings - 3a9ari.ma</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8fafc;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .header {
-            background: linear-gradient(135deg, #6b46c1, #8b5cf6);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .filter-form {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        select {
-            padding: 10px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        th {
-            background: #f1f5f9;
-            font-weight: 600;
-        }
-        .action-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: white;
-            background: #e74c3c;
-            transition: background 0.3s;
-        }
-        .action-btn:hover {
-            background: #c0392b;
-        }
-        .back-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #6b46c1;
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
-            margin-bottom: 20px;
-        }
-        .message {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .error {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+      body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8fafc;
+    margin: 0;
+    padding: 20px;
+    color: #334155;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    background: linear-gradient(135deg, #6b46c1, #8b5cf6);
+    color: white;
+    padding: 25px 20px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(107, 70, 193, 0.3);
+}
+
+.header h1 {
+    margin: 0 0 10px;
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+.back-btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background: #4c1d95;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 15px rgba(76, 29, 149, 0.4);
+}
+
+.back-btn:hover {
+    background: #6b46c1;
+    box-shadow: 0 6px 25px rgba(107, 70, 193, 0.6);
+}
+
+.filter-form {
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.filter-form label {
+    font-size: 1rem;
+}
+
+select {
+    padding: 10px 14px;
+    border: 1.8px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    background-color: white;
+    color: #334155;
+    min-width: 180px;
+}
+
+select:hover, select:focus {
+    border-color: #6b46c1;
+    outline: none;
+    box-shadow: 0 0 8px rgba(107, 70, 193, 0.4);
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    background: transparent;
+}
+
+thead tr th {
+    background: #f1f5f9;
+    font-weight: 700;
+    color: #475569;
+    padding: 15px 20px;
+    text-align: left;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    user-select: none;
+}
+
+tbody tr {
+    background: white;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+}
+
+tbody tr td {
+    padding: 15px 20px;
+    color: #334155;
+    vertical-align: middle;
+}
+
+tbody tr td:first-child {
+    font-weight: 600;
+}
+
+tbody tr:not(:last-child) {
+    margin-bottom: 12px;
+}
+
+.action-btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    background: #e74c3c;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.5);
+}
+
+.action-btn:hover {
+    background: #c0392b;
+    box-shadow: 0 6px 20px rgba(192, 57, 43, 0.7);
+}
+
+.message {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(6, 95, 70, 0.3);
+}
+
+.error {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(153, 27, 27, 0.3);
+}
+
+@media (max-width: 768px) {
+    .filter-form {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+    }
+
+    thead tr {
+        display: none;
+    }
+
+    tbody tr {
+        margin-bottom: 20px;
+        box-shadow: none;
+        background: #f9fafb;
+        border-radius: 12px;
+        padding: 15px;
+        border: 1px solid #e2e8f0;
+    }
+
+    tbody tr td {
+        padding: 8px 10px;
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+        border: none;
+    }
+
+    tbody tr td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: 700;
+        color: #6b7280;
+        white-space: nowrap;
+        font-size: 0.9rem;
+    }
+
+    .action-btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+    }
+}
+
     </style>
 </head>
 <body>
