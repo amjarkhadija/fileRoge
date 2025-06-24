@@ -6,7 +6,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] !== true) {
     header('Location: loginadmine.php');
     exit();
 }
-14
+
 require_once 'config.php';
 
 try {
