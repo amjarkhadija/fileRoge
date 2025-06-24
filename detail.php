@@ -92,7 +92,7 @@ try {
     <div class="contact-card">
         <h3 class="contact-title">Contactez-nous</h3>
         <p>Intéressé par cette propriété ? Contactez notre équipe pour plus d'informations.</p>
-        <a href="contact.html" class="contact-button">Appeler maintenant</a>
+        <a href="contactuser.php" class="contact-button">Appeler maintenant</a>
     </div>
 </div>
 

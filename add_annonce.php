@@ -2,6 +2,12 @@
 session_start();
 require_once 'config.php';
 
+// Check if user is logged in, otherwise redirect to login page
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
+
 $message = '';
 $categories = [];
 $erreurs = [];
@@ -111,27 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Add New Annonce - 3a9ari.ma</title>
     <link rel="stylesheet" href="add_annonce.css">
-    <style>
-        .error {
-            color: red;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .success-message {
-            color: green;
-        }
-        .error-message {
-            color: red;
-        }
-        .container {
-            max-width: 700px;
-            margin: auto;
-            padding: 1em;
-        }
-        form div {
-            margin-bottom: 15px;
-        }
-    </style>
+    
 </head>
 <body>
 <div class="container">

@@ -29,6 +29,10 @@ try {
    
 </head>
 <body>
+
+    <!-- Include header -->
+    <?php include 'includes/header.php'; ?>
+
     <div class="container">
         <!-- Header Section -->
         <div class="dashboard-header">
@@ -97,5 +101,7 @@ try {
             <?php endif; ?>
         </div>
     </div>
+        <!-- Include Footer -->
+    <?php include 'includes/footer.php'; ?>
 </body>
 </html>

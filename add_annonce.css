@@ -193,6 +193,26 @@ button[type="submit"]:hover {
     gap: 12px;
 }
 
+.error {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+.success-message {
+    color: green;
+}
+.error-message {
+    color: red;
+}
+.container {
+    max-width: 700px;
+    margin: auto;
+    padding: 1em;
+}
+form div {
+    margin-bottom: 15px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {

@@ -28,7 +28,7 @@ try {
     $stmt->execute($params);
     $annonces = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
+    echo "<div style='color: red; text-align: center;'>Database Error: " . htmlspecialchars($e->getMessage()) . "</div>";
     $annonces = [];
 }
 ?>
@@ -47,7 +47,7 @@ try {
             <div class="logo"><img src="img/logo.png" alt="Logo"></div>
             <ul>
                 <li><a href="#">Home</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="contact.php">Contact</a></li>
                 <li><a href="index.php">About</a></li>
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <li><a href="dashboard.php">Dashboard</a></li>
@@ -86,12 +86,16 @@ try {
             <h2>Discover our new way of searching</h2>
             <p>Find the best properties that match your lifestyle.</p>
             <div class="features">
-                <span>✔️ Best Budget</span>
-                <span>✔️ Great Locations</span>
-                <span>✔️ Modern Features</span>
+                <span><img src="img/vr.svg" alt=""> Best Budget</span>
+                <span><img src="img/icons 2.svg" alt=""> Great Locations</span>
+                <span><img src="img/heart.svg" alt=""> Modern Features</span>
             </div>
             <div class="buttons">
-                <a href="#" class="btn-primary">START SEARCH</a>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="add_annonce.php" class="btn-primary">START SEARCH</a>
+                <?php else: ?>
+                    <a href="login.php" class="btn-primary">START SEARCH</a>
+                <?php endif; ?>
                 <a href="#" class="btn-outline">Live Search</a>
             </div>
         </div>
@@ -100,104 +104,45 @@ try {
     <!-- Properties Section -->
     <section class="properties">
         <h2>Based on your location</h2>
-        <div class="grid">
-            <?php foreach ($annonces as $a): ?>
-                <div class="property-card">
-                    <img src="<?= htmlspecialchars($a['chemin_image'] ?? 'default.jpg') ?>" alt="Image" class="property-image">
-
-                    <div class="property-details">
-                        <h2><strong><?= number_format($a['prix'], 0, '', ' ') ?> DH</strong> <span class="per-month">/month</span></h2>
-                        <p class="property-title"><?= htmlspecialchars($a['titre']) ?></p>
-                        <p class="location"><?= htmlspecialchars($a['ville']) ?>, <?= htmlspecialchars($a['quartier']) ?></p>
-
-                        <div class="property-icons">
-                            <div class="icon-text">
-                                <span><img src="img/bed-svg.svg" alt=""></span>
-                                <span><?= htmlspecialchars($a['nb_pieces']) ?> rooms</span>
+        <?php if (empty($annonces)): ?>
+            <p style="text-align: center; color: #666;">No properties found. Try adjusting your search.</p>
+        <?php else: ?>
+            <div class="grid">
+                <?php foreach ($annonces as $a): ?>
+                    <div class="property-card">
+                        <img src="<?= htmlspecialchars($a['chemin_image'] ?? 'default.jpg') ?>" alt="Image" class="property-image">
+                        <div class="property-details">
+                            <h2><strong><?= number_format($a['prix'], 0, '', ' ') ?> DH</strong> <span class="per-month">/month</span></h2>
+                            <p class="property-title"><?= htmlspecialchars($a['titre']) ?></p>
+                            <p class="location"><?= htmlspecialchars($a['ville']) ?>, <?= htmlspecialchars($a['quartier']) ?></p>
+                            <div class="property-icons">
+                                <div class="icon-text">
+                                    <span><img src="img/bed-svg.svg" alt=""></span>
+                                    <span><?= htmlspecialchars($a['nb_pieces']) ?> rooms</span>
+                                </div>
+                                <div class="icon-text">
+                                    <span><img src="img/person.svg" alt=""></span>
+                                    <span>1–2 Persons</span>
+                                </div>
+                                <div class="icon-text">
+                                    <span><img src="img/bathtub icon.png" alt=""></span>
+                                    <span>Bath</span>
+                                </div>
                             </div>
-                            <div class="icon-text">
-                                <span><img src="img/person.svg" alt=""></span>
-                                <span>1–2 Persons</span>
+                            <div style="margin-top: 15px;">
+                                <a href="detail.php?id=<?= $a['id_annonce'] ?>" class="btn-details">View Details</a>
                             </div>
-                            <div class="icon-text">
-                                <span><img src="img/bathtub icon.png" alt=""></span>
-                                <span>Bath</span>
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 15px;">
-                            <a href="detail.php?id=<?= $a['id_annonce'] ?>" class="btn-outline">View Details</a>
                         </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
         <div class="more">
-        <a href="index.php" class="btn-primary">Browse properties →</a>
+            <a href="index.php" class="btn-primary">Browse properties →</a>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <!-- Logo Section -->
-            <div class="footer-section logo-section">
-                <div class="logo">
-                    <div class="logo-icon">
-                        <!-- <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M16 2L6 8v16l10 6 10-6V8l-10-6z" stroke="white" stroke-width="2" fill="none"/>
-                            <path d="M16 8v16" stroke="white" stroke-width="2"/>
-                            <path d="M6 8l10 6 10-6" stroke="white" stroke-width="2"/>
-                        </svg> -->
-                        <img class="logo-icon"><img src="img/logo.png" alt=""/>
-                    </div>
-                    
-                </div>
-            </div>
-            <!-- Navigation Links Section -->
-            <div class="footer-section links-section">
-                <h3 class="section-title">Links</h3>
-                <nav class="footer-nav">
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#services">Services</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#contact">Contact Us</a></li>
-                    </ul>
-                </nav>
-            </div>
-            <!-- Contact Information Section -->
-            <div class="footer-section contact-section">
-                <h3 class="section-title">Find Us</h3>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <p class="address">43 W. Wellington Road Fairhope</p>
-                        <p class="address">AL 36532</p>
-                    </div>
-                    <div class="contact-item">
-                        <p class="phone">(251) 388-6895</p>
-                    </div>
-                    <div class="contact-item">
-                        <p class="email">terminaloutlook.com</p>
-                    </div>
-                </div>
-                <div class="social-media">
-                    <h4 class="follow-title">Follow Us</h4>
-                    <div class="social-icons">
-                        <a href="#" class="social-link" aria-label="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="social-link" aria-label="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="social-link" aria-label="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <!-- Include Footer -->
+    <?php include 'includes/footer.php'; ?>
 </body>
 </html>
